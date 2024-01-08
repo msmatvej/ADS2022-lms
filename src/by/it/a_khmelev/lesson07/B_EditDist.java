@@ -39,15 +39,29 @@ import java.util.Scanner;
 
 public class B_EditDist {
 
+    int getDistanceEditing(String one, String two) {
+        int m = one.length();
+        int n = two.length();
 
-    int getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        // Create a matrix to store distances
+        int[][] dp = new int[m + 1][n + 1];
 
+        // Initialize the matrix
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= n; j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                } else if (j == 0) {
+                    dp[i][j] = i;
+                } else {
+                    dp[i][j] = Math.min(Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                            dp[i - 1][j - 1] + (one.charAt(i - 1) == two.charAt(j - 1) ? 0 : 1));
+                }
+            }
+        }
 
-
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // The bottom-right cell of the matrix contains the Levenshtein distance
+        return dp[m][n];
     }
 
 
@@ -57,9 +71,8 @@ public class B_EditDist {
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson07/dataABC.txt");
         B_EditDist instance = new B_EditDist();
         Scanner scanner = new Scanner(stream);
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
+        System.out.println(instance.getDistanceEditing(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEditing(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEditing(scanner.nextLine(), scanner.nextLine()));
     }
-
 }

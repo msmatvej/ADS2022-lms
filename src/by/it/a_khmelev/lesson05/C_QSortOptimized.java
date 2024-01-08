@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
-
+import java.util.Arrays;
 /*
 Видеорегистраторы и площадь 2.
 Условие то же что и в задаче А.
@@ -32,53 +32,79 @@ import java.util.Scanner;
 
 public class C_QSortOptimized {
 
-    //отрезок
-    private class Segment  implements Comparable{
+    private class Segment implements Comparable<Segment> {
         int start;
         int stop;
 
-        Segment(int start, int stop){
+        Segment(int start, int stop) {
             this.start = start;
             this.stop = stop;
         }
 
         @Override
-        public int compareTo(Object o) {
-            //подумайте, что должен возвращать компаратор отрезков
-            return 0;
+        public int compareTo(Segment o) {
+            return Integer.compare(this.start, o.start);
         }
     }
 
-
-    int[] getAccessory2(InputStream stream) throws FileNotFoundException {
-        //подготовка к чтению данных
+    int[] getAccessory2(InputStream stream) {
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        //число отрезков отсортированного массива
+
         int n = scanner.nextInt();
-        Segment[] segments=new Segment[n];
-        //число точек
+        Segment[] segments = new Segment[n];
+
         int m = scanner.nextInt();
-        int[] points=new int[m];
-        int[] result=new int[m];
+        int[] points = new int[m];
+        int[] result = new int[m];
 
-        //читаем сами отрезки
         for (int i = 0; i < n; i++) {
-            //читаем начало и конец каждого отрезка
-            segments[i]=new Segment(scanner.nextInt(),scanner.nextInt());
+            segments[i] = new Segment(scanner.nextInt(), scanner.nextInt());
         }
-        //читаем точки
-        for (int i = 0; i < n; i++) {
-            points[i]=scanner.nextInt();
+
+        for (int i = 0; i < m; i++) {
+            points[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением быстрой сортировки
-        //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
 
+        Arrays.sort(segments);
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        for (int i = 0; i < m; i++) {
+            int point = points[i];
+            int index = binarySearch(segments, point);
+            result[i] = countCoveringSegments(segments, point, index);
+        }
+
         return result;
     }
 
+    private int binarySearch(Segment[] segments, int point) {
+        int left = 0;
+        int right = segments.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (segments[mid].start == point) {
+                return mid;
+            } else if (segments[mid].start < point) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return right;
+    }
+
+    private int countCoveringSegments(Segment[] segments, int point, int index) {
+        int count = 0;
+        for (int i = index; i >= 0; i--) {
+            if (segments[i].start <= point && point <= segments[i].stop) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";

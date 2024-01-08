@@ -4,21 +4,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+
 //Lesson 3. A_Huffman.
 //Разработайте метод encode(File file) для кодирования строки (код Хаффмана)
-
+//
 // По данным файла (непустой строке ss длины не более 104104),
 // состоящей из строчных букв латинского алфавита,
 // постройте оптимальный по суммарной длине беспрефиксный код.
-
+//
 // Используйте Алгоритм Хаффмана — жадный алгоритм оптимального
 // безпрефиксного кодирования алфавита с минимальной избыточностью.
-
+//
 // В первой строке выведите количество различных букв kk,
 // встречающихся в строке, и размер получившейся закодированной строки.
 // В следующих kk строках запишите коды букв в формате "letter: code".
 // В последней строке выведите закодированную строку. Примеры ниже
-
+//
 //        Sample Input 1:
 //        a
 //
@@ -26,7 +27,7 @@ import java.util.*;
 //        1 1
 //        a: 0
 //        0
-
+//
 //        Sample Input 2:
 //        abacabad
 //
@@ -86,6 +87,31 @@ public class A_Huffman {
         }
 
     }
+    // Дополнительные методы в классе A_Huffman
+    private Map<Character, Integer> calculateFrequencies(String s) {
+        Map<Character, Integer> count = new HashMap<>();
+        for (char ch : s.toCharArray()) {
+            count.put(ch, count.getOrDefault(ch, 0) + 1);
+        }
+        return count;
+    }
+
+    private PriorityQueue<Node> buildPriorityQueue(Map<Character, Integer> frequencyMap) {
+        PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
+        for (Map.Entry<Character, Integer> entry : frequencyMap.entrySet()) {
+            priorityQueue.offer(new LeafNode(entry.getValue(), entry.getKey()));
+        }
+        return priorityQueue;
+    }
+
+    private Node buildHuffmanTree(PriorityQueue<Node> priorityQueue) {
+        while (priorityQueue.size() > 1) {
+            Node left = priorityQueue.poll();
+            Node right = priorityQueue.poll();
+            priorityQueue.offer(new InternalNode(left, right));
+        }
+        return priorityQueue.poll();
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////
     //расширение базового класса до листа дерева
@@ -112,34 +138,29 @@ public class A_Huffman {
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
     String encode(File file) throws FileNotFoundException {
-        //прочитаем строку для кодирования из тестового файла
+        // Прочитаем строку для кодирования из тестового файла
         Scanner scanner = new Scanner(file);
         String s = scanner.next();
 
-        //все комментарии от тестового решения были оставлены т.к. это задание A.
-        //если они вам мешают их можно удалить
+        Map<Character, Integer> frequencyMap = calculateFrequencies(s);
+        PriorityQueue<Node> priorityQueue = buildPriorityQueue(frequencyMap);
+        Node root = buildHuffmanTree(priorityQueue);
 
-        Map<Character, Integer> count = new HashMap<>();
-        //1. переберем все символы по очереди и рассчитаем их частоту в Map count
-            //для каждого символа добавим 1 если его в карте еще нет или инкремент если есть.
+        // Инициализируем коды
+        codes.clear();
 
-        //2. перенесем все символы в приоритетную очередь в виде листьев
-        PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
+        // Заполняем коды
+        root.fillCodes("");
 
-        //3. вынимая по два узла из очереди (для сборки родителя)
-        //и возвращая этого родителя обратно в очередь
-        //построим дерево кодирования Хаффмана.
-        //У родителя частоты детей складываются.
+        // Построение закодированной строки
+        StringBuilder encodedString = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            encodedString.append(codes.get(ch));
+        }
 
-        //4. последний из родителей будет корнем этого дерева
-        //это будет последний и единственный элемент оставшийся в очереди priorityQueue.
-        StringBuilder sb = new StringBuilder();
-        //.....
-
-        return sb.toString();
-        //01001100100111
-        //01001100100111
+        return encodedString.toString();
     }
+
     //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
 
 

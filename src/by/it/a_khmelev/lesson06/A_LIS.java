@@ -32,7 +32,6 @@ import java.util.Scanner;
 
 public class A_LIS {
 
-
     int getSeqSize(InputStream stream) throws FileNotFoundException {
         //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
@@ -44,7 +43,26 @@ public class A_LIS {
         for (int i = 0; i < n; i++) {
             m[i] = scanner.nextInt();
         }
-        int result = 0;
+        int[] dp = new int[n];
+        int result = 1;
+
+        // Инициализация массива dp, все элементы устанавливаются в 1,
+        // так как длина наибольшей подпоследовательности для каждого элемента по крайней мере равна 1.
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+        }
+
+        // Вычисляем dp[i] для каждого i от 1 до n
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (m[i] > m[j] && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                }
+            }
+            // Обновляем результат, если необходимо
+            result = Math.max(result, dp[i]);
+        }
+
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }

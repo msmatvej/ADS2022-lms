@@ -23,9 +23,32 @@ public class A_VideoRegistrator {
     List<Double> calcStartTimes(double[] events, double workDuration)  {
         //events - события которые нужно зарегистрировать
         //timeWorkDuration время работы видеокамеры после старта
-        List<Double> result;
-        result = new ArrayList<>();
-        int i=0;                              //i - это индекс события events[i]
+        List<Double> startTimes = new ArrayList<>();
+        if (events == null || events.length == 0 || workDuration <= 0) {
+            return startTimes;
+        }
+
+        // Сортировка событий по времени начала
+        Arrays.sort(events);
+
+        // Начало первого события
+        double currentStartTime = events[0];
+        startTimes.add(currentStartTime);
+
+        for (int i = 1; i < events.length; i++) {
+            double eventStartTime = events[i];
+
+            // Проверка пересечения с предыдущим событием
+            if (eventStartTime > currentStartTime + workDuration) {
+                // Если событие начинается после окончания текущего, добавляем его начальное время
+                startTimes.add(eventStartTime);
+                currentStartTime = eventStartTime;
+            }
+        }
+
+        return startTimes;
+    }
+}                              //i - это индекс события events[i]
         //комментарии от проверочного решения сохранены для подсказки, но вы можете их удалить.
         //подготовка к жадному поглощению массива событий
         //hint: сортировка Arrays.sort обеспечит скорость алгоритма
@@ -40,6 +63,4 @@ public class A_VideoRegistrator {
 
 
 
-        return result;                        //вернем итог
-    }
-}
+

@@ -15,7 +15,8 @@ package by.it.a_khmelev.lesson02;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
+import java.util.Arrays;
+import java.util.Comparator;
 public class C_GreedyKnapsack {
     private static class Item implements Comparable<Item> {
         int cost;
@@ -65,6 +66,17 @@ public class C_GreedyKnapsack {
         //будет особенно хорошо, если с собственной сортировкой
         //кроме того, можете описать свой компаратор в классе Item
         //ваше решение.
+        Arrays.sort(items, Comparator.comparingDouble(item -> -1.0 * item.cost / item.weight));
+        for (Item item : items) {
+            if (W == 0) {
+                break;
+            }
+
+            double amountToAdd = Math.min(item.weight, W);
+            result += amountToAdd * item.cost / item.weight;
+            item.weight -= amountToAdd;
+            W -= amountToAdd;
+        }
 
 
 

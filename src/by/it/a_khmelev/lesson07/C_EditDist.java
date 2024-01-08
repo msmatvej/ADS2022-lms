@@ -49,13 +49,47 @@ import java.util.Scanner;
 
 public class C_EditDist {
 
-    String getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+    String getDistanceEditing(String one, String two) {
+        // Get the lengths of input strings
+        int m = one.length();
+        int n = two.length();
 
+        // Create a 2D array to store the edit distances
+        int[][] dp = new int[m + 1][n + 1];
 
-        String result = "";
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Initialize the array
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= n; j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                } else if (j == 0) {
+                    dp[i][j] = i;
+                } else if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = 1 + Math.min(dp[i][j - 1], Math.min(dp[i - 1][j], dp[i - 1][j - 1]));
+                }
+            }
+        }
+
+        // Traverse the dp array to get the edit operations
+        StringBuilder result = new StringBuilder();
+        int i = m, j = n;
+        while (i > 0 || j > 0) {
+            if (i > 0 && j > 0 && one.charAt(i - 1) == two.charAt(j - 1)) {
+                result.insert(0, "#,");
+                i--;
+                j--;
+            } else if (j > 0 && (i == 0 || dp[i][j - 1] < dp[i - 1][j] || dp[i - 1][j - 1] == dp[i][j - 1])) {
+                result.insert(0, "+").insert(1, two.charAt(j - 1)).insert(2, ",");
+                j--;
+            } else {
+                result.insert(0, "-").insert(1, one.charAt(i - 1)).insert(2, ",");
+                i--;
+            }
+        }
+
+        return result.toString();
     }
 
 
@@ -64,9 +98,8 @@ public class C_EditDist {
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson07/dataABC.txt");
         C_EditDist instance = new C_EditDist();
         Scanner scanner = new Scanner(stream);
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
+        System.out.println(instance.getDistanceEditing(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEditing(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEditing(scanner.nextLine(), scanner.nextLine()));
     }
-
 }

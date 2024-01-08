@@ -35,30 +35,84 @@ Sample Output:
 
 public class C_GetInversions {
 
+    // Метод для слияния и подсчета инверсий
+    private int mergeAndCountInversions(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        // Создаем временные подмассивы
+        int[] leftArr = new int[n1];
+        int[] rightArr = new int[n2];
+
+        // Копируем данные во временные массивы
+        System.arraycopy(arr, left, leftArr, 0, n1);
+        System.arraycopy(arr, mid + 1, rightArr, 0, n2);
+
+        int count = 0; // Число инверсий
+
+        // Слияние временных массивов
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (leftArr[i] <= rightArr[j]) {
+                arr[k] = leftArr[i];
+                i++;
+            } else {
+                arr[k] = rightArr[j];
+                j++;
+                count += n1 - i; // Если элемент из правого подмассива меньше, то увеличиваем число инверсий
+            }
+            k++;
+        }
+
+        // Копируем оставшиеся элементы из leftArr, если таковые есть
+        while (i < n1) {
+            arr[k] = leftArr[i];
+            i++;
+            k++;
+        }
+
+        // Копируем оставшиеся элементы из rightArr, если таковые есть
+        while (j < n2) {
+            arr[k] = rightArr[j];
+            j++;
+            k++;
+        }
+
+        return count;
+    }
+
+    // Метод для сортировки слиянием и подсчета инверсий
+    private int mergeSortAndCountInversions(int[] arr, int left, int right) {
+        int count = 0;
+
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+
+            // Рекурсивно сортируем левую и правую части
+            count += mergeSortAndCountInversions(arr, left, mid);
+            count += mergeSortAndCountInversions(arr, mid + 1, right);
+
+            // Объединяем отсортированные части и считаем инверсии
+            count += mergeAndCountInversions(arr, left, mid, right);
+        }
+
+        return count;
+    }
+
     int calc(InputStream stream) throws FileNotFoundException {
-        //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!
-        //размер массива
+
+        // Размер массива
         int n = scanner.nextInt();
-        //сам массив
         int[] a = new int[n];
+
+        // Заполняем массив
         for (int i = 0; i < n; i++) {
             a[i] = scanner.nextInt();
         }
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!     тут ваше решение   !!!!!!!!!!!!!!!!!!!!!!!!
 
-
-
-
-
-
-
-
-
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // Вызываем метод сортировки слиянием и подсчета инверсий
+        return mergeSortAndCountInversions(a, 0, n - 1);
     }
 
 

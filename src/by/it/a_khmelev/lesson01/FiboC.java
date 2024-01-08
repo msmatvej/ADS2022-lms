@@ -20,14 +20,41 @@ public class FiboC {
         int m = 2;
         System.out.printf("fasterC(%d)=%d \n\t time=%d \n\n", n, fibo.fasterC(n, m), fibo.time());
     }
-
     long fasterC(long n, int m) {
         //Решение сложно найти интуитивно
         //возможно потребуется дополнительный поиск информации
         //см. период Пизано
-        return 0L;
+        if (n <= 1) {
+            return n;
+        }
+
+        int periodLength = findPisanoPeriodLength(m);
+        int remainder = (int) (n % periodLength);
+
+        long[] fib = new long[periodLength + 1];
+        fib[0] = 0;
+        fib[1] = 1;
+
+        for (int i = 2; i <= periodLength; i++) {
+            fib[i] = (fib[i - 1] + fib[i - 2]) % m;
+        }
+
+        return fib[remainder];
+    }
+    private static int findPisanoPeriodLength(int m) {
+        int a = 0, b = 1, c = a + b;
+        for (int i = 0; i < m * m; i++) {
+            c = (a + b) % m;
+            a = b;
+            b = c;
+            if (a == 0 && b == 1) {
+                return i + 1;
+            }
+        }
+        return -1;
     }
 
+//        return 0L;
+    }
 
-}
 

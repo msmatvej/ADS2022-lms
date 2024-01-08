@@ -30,7 +30,6 @@ import java.util.Scanner;
 
 public class B_LongDivComSubSeq {
 
-
     int getDivSeqSize(InputStream stream) throws FileNotFoundException {
         //подготовка к чтению данных
         Scanner scanner = new Scanner(stream);
@@ -42,9 +41,26 @@ public class B_LongDivComSubSeq {
         for (int i = 0; i < n; i++) {
             m[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи методами динамического программирования (!!!)
-        int result = 0;
+        //тут реализуйте логику задачи методами динамического программирования
+        int[] dp = new int[n];
+        int result = 1;
 
+        // Инициализация массива dp, все элементы устанавливаются в 1,
+        // так как длина наибольшей подпоследовательности для каждого элемента по крайней мере равна 1.
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+        }
+
+        // Вычисляем dp[i] для каждого i от 1 до n
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (m[i] % m[j] == 0 && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                }
+            }
+            // Обновляем результат, если необходимо
+            result = Math.max(result, dp[i]);
+        }
 
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
